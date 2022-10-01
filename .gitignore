@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/api/bin/Debug/net6.0
+/api/obj
+/service/bin/Debug/net6.0
+/service/obj
+/service/.local-chromium/Win64-970485/chrome-win

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <style>
+        html,
+        body,
+        .container {
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container text-center">
+        <div class="d-flex h-100 justify-content-center align-items-center">
+            <div>
+                <form method="post" enctype="multipart/form-data" onsubmit="Submit(this);return false;">
+                    <label class="form-label" for="fileUpload">Сконвертировать HTML в PDF</label>
+                    <input class="form-control" id="fileUpload" type="file" name="formFile" accept=".html" />
+                    <div class="mt-4 d-flex">
+                        <div style="margin-right: 10px;">
+                            <input class="btn btn-secondary" type="submit" value="Upload" name="uploadBtn" />
+                        </div>
+                        <div>
+                            <a class="btn btn-success" name="downloadBtn" style="visibility: hidden;">download</a>
+                        </div>
+                    </div>
+                    <div class="d-flex mt-2" style="margin-top:15px">
+                        <output name="result"></output>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function Submit(oFormElement) {
+            const formData = new FormData(oFormElement);
+            if (formData.get("formFile").size === 0)
+                return;
+
+            let host = "http://localhost:5296";
+            let resultElement = oFormElement.elements.namedItem("result");
+            let uploadBtnElement = oFormElement.elements.namedItem("uploadBtn");
+            let downloadBtn = document.getElementsByName("downloadBtn")[0];
+            let fileUpload = document.getElementById('fileUpload');
+            console.log(fileUpload);
+
+            uploadBtnElement.disabled = true;
+            downloadBtn.style.visibility = 'hidden';
+            resultElement.value = 'статус: загрузка файла...';
+
+            try {
+
+                const response = await fetch(`${host}/convert/html`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                let guid = await response.text();
+
+                resultElement.value = 'статус: сонвертация файла в pdf...';
+                if (response.ok) {
+                    let intervalId = setInterval(async () => {
+                        const response = await fetch(`${host}/convert/${guid}/exists`, {
+                            method: 'GET',
+                        });
+
+                        let existsRes = await response.json();
+                        if (existsRes.exists) {
+                            downloadBtn.href = `${host}/convert/${guid}/download`;
+                            downloadBtn.style.visibility = 'visible';
+                            uploadBtnElement.disabled = false;
+                            resultElement.value = 'статус: готово!';
+                            clearInterval(intervalId);
+                        }
+                    }, 1000);
+                } else {
+                    resultElement.value = 'произошла ошибка, попробуйте позже..';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+
+</html>
