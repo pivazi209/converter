@@ -52,6 +52,7 @@
             console.log(fileUpload);
 
             uploadBtnElement.disabled = true;
+            fileUpload.disabled = true;
             downloadBtn.style.visibility = 'hidden';
             resultElement.value = 'статус: загрузка файла...';
 
@@ -76,6 +77,7 @@
                             downloadBtn.href = `${host}/convert/${guid}/download`;
                             downloadBtn.style.visibility = 'visible';
                             uploadBtnElement.disabled = false;
+                            fileUpload.disabled = false;
                             resultElement.value = 'статус: готово!';
                             clearInterval(intervalId);
                         }
