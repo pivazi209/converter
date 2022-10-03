@@ -1,6 +1,6 @@
 # converter
 <h3>Frontend: Bootstrap, pure JS</h3>
-<h3>Backend: .NET 6 (ASP.NET, BackgroundService), RabbitMQ, Puppeteer Sharp</h3>
+<h3>Backend: ASP.NET, BackgroundService, Puppeteer Sharp</h3>
 
 <div>
 <h4>Requirements:</h4>
